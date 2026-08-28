@@ -10,7 +10,9 @@ This repository is a portfolio demonstration by [May Myat Mon](https://github.co
 
 [Open the free Signal Atlas web app](https://maymm3.github.io/multiomics-biomarker-demo/) to explore the recovered synthetic signals or calculate Cohen's *d* from two groups of summary values.
 
-The app runs entirely in the browser. Values entered into the calculator are not uploaded, stored, or shared. Results are exploratory and are not clinical recommendations.
+The interactive data workspace accepts CSV and TSV files, reports basic table quality metrics, lets users adjust cells, and redraws grouped means or numeric distributions immediately. Adjusted data can be downloaded as a cleaned CSV. For responsive use, files are limited to 8 MB, 25,000 rows, and 200 columns.
+
+The app runs entirely in the browser. Uploaded files and calculator values are not sent to a server, stored, or shared. Results are exploratory and are not clinical recommendations.
 
 Changes to the static app are automatically tested and deployed to GitHub Pages from the reviewed `docs/` directory.
 

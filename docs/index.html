@@ -4,16 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#214d3b">
-    <title>Signal Atlas | Free bioinformatics effect explorer</title>
-    <meta name="description" content="A free browser-based bioinformatics tool for exploring synthetic biomarker signals and estimating standardized group differences. Built by May Myat Mon.">
+    <title>Signal Atlas | Private browser-based omics data explorer</title>
+    <meta name="description" content="Upload, adjust, visualize, and export CSV or TSV research tables in a private browser-only workspace. A free bioinformatics tool built by May Myat Mon.">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Signal Atlas">
-    <meta property="og:description" content="A free, reproducible bioinformatics tool built by May Myat Mon.">
+    <meta property="og:description" content="Upload, adjust, and visualize research tables in a private browser-only workspace.">
     <meta property="og:url" content="https://maymm3.github.io/multiomics-biomarker-demo/">
     <meta property="og:image" content="https://maymm3.github.io/multiomics-biomarker-demo/og.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="./styles.css">
     <script src="./stats.js" defer></script>
+    <script src="./data.js" defer></script>
     <script src="./app.js" defer></script>
   </head>
   <body>
@@ -21,6 +22,7 @@
     <nav class="nav" aria-label="Primary navigation">
       <a class="brand" href="#top" aria-label="Signal Atlas home"><span class="brand-mark" aria-hidden="true">S</span>Signal Atlas</a>
       <div class="nav-links">
+        <a href="#dashboard">Your data</a>
         <a href="#explore">Explore</a>
         <a href="#calculate">Try the tool</a>
         <a class="nav-cta" href="https://github.com/maymm3/multiomics-biomarker-demo">View the code</a>
@@ -32,9 +34,9 @@
         <div>
           <p class="eyebrow"><span aria-hidden="true"></span> Free · open · reproducible</p>
           <h1>Explore a biomarker workflow without the black box.</h1>
-          <p class="lede">A free bioinformatics tool built by May Myat Mon. Explore a tested longitudinal proteomics analysis, then compare two groups using your own summary values.</p>
+          <p class="lede">A free bioinformatics tool built by May Myat Mon. Upload and adjust a table, visualize it instantly, explore a tested proteomics analysis, or compare two groups.</p>
           <div class="hero-actions">
-            <a class="button primary" href="#explore">Explore the signals <span aria-hidden="true">↓</span></a>
+            <a class="button primary" href="#dashboard">Open the data workspace <span aria-hidden="true">↓</span></a>
             <a class="button secondary" href="https://github.com/maymm3/multiomics-biomarker-demo/actions"><span class="status-dot" aria-hidden="true"></span> Reproducibility checks</a>
           </div>
         </div>
@@ -50,6 +52,75 @@
         <article><strong>40</strong><span>Protein features</span></article>
         <article><strong>3</strong><span>Study timepoints</span></article>
         <article><strong>8/8</strong><span>Planted signals recovered</span></article>
+      </section>
+
+      <section class="dashboard section" id="dashboard">
+        <div class="section-heading dashboard-heading">
+          <div><p class="kicker">Private data workspace</p><h2>Upload, adjust, and visualize your table.</h2></div>
+          <div class="upload-actions">
+            <label class="file-button">Choose CSV or TSV<input id="dataset-file" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values"></label>
+            <button class="text-button" id="load-example" type="button">Load example</button>
+          </div>
+        </div>
+        <div class="privacy-banner">
+          <span aria-hidden="true">●</span>
+          <p><strong>Browser-only workspace.</strong> Your file is processed on this device and is never uploaded. Do not use identifiable patient data on a shared computer.</p>
+        </div>
+        <p class="dataset-message" id="dataset-message" role="status" aria-live="polite">Synthetic example loaded. Choose a CSV or TSV to begin.</p>
+
+        <div class="data-metrics" aria-label="Uploaded dataset summary">
+          <article><span>Rows</span><strong id="data-rows">0</strong></article>
+          <article><span>Columns</span><strong id="data-columns">0</strong></article>
+          <article><span>Missing cells</span><strong id="data-missing">0</strong></article>
+          <article><span>Numeric columns</span><strong id="data-numeric">0</strong></article>
+        </div>
+
+        <div class="dashboard-controls" aria-label="Visualization controls">
+          <label>Category
+            <select id="category-column"></select>
+          </label>
+          <label>Numeric value
+            <select id="value-column"></select>
+          </label>
+          <label>Visualization
+            <select id="chart-mode">
+              <option value="mean">Mean by category</option>
+              <option value="histogram">Distribution</option>
+            </select>
+          </label>
+          <label>Filter rows
+            <input id="table-filter" type="search" placeholder="Search any value" autocomplete="off">
+          </label>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="chart-card">
+            <div class="card-heading">
+              <div><p class="detail-label">Live visualization</p><h3 id="chart-title">Mean value by group</h3></div>
+              <span id="chart-observations">0 valid values</span>
+            </div>
+            <svg id="data-chart" viewBox="0 0 760 350" role="img" aria-labelledby="chart-title chart-description"></svg>
+            <p class="chart-description" id="chart-description">The chart updates when you edit a value or change a control.</p>
+          </article>
+
+          <article class="table-card">
+            <div class="card-heading">
+              <div><p class="detail-label">Editable data</p><h3>Table preview</h3></div>
+              <span id="preview-count">0 rows</span>
+            </div>
+            <div class="table-scroll" tabindex="0" aria-label="Editable uploaded data table">
+              <table id="data-table">
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <p class="table-note" id="table-note">Edit any visible cell. The dashboard recalculates immediately.</p>
+            <div class="table-actions">
+              <button id="add-row" type="button">Add row</button>
+              <button id="download-data" type="button">Download cleaned CSV</button>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section class="section" id="explore">

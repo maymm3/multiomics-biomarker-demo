@@ -2,8 +2,17 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import '../docs/stats.js';
+import '../docs/data.js';
 
 const { calculateCohensD, classifyEffect } = globalThis.SignalStats;
+const {
+  parseDelimited,
+  serializeDelimited,
+  numericColumnIndexes,
+  summarizeDataset,
+  aggregateMeanByCategory,
+  histogram,
+} = globalThis.SignalData;
 
 test('reproduces the default synthetic example', () => {
   const effect = calculateCohensD({
@@ -28,4 +37,40 @@ test('keeps effect direction and labels equal means', () => {
 test('rejects invalid sample sizes and deviations', () => {
   assert.equal(calculateCohensD({ n1: 1, mean1: 1, sd1: 1, n2: 10, mean2: 0, sd2: 1 }), null);
   assert.equal(calculateCohensD({ n1: 10, mean1: 1, sd1: 0, n2: 10, mean2: 0, sd2: 1 }), null);
+});
+
+test('parses quoted CSV and preserves it through cleaned export', () => {
+  const parsed = parseDelimited('\uFEFFfeature,group,value\r\n"P,001","A ""group""",1.5\r\nP002,B,\r\n');
+  assert.deepEqual(parsed.headers, ['feature', 'group', 'value']);
+  assert.deepEqual(parsed.rows[0], ['P,001', 'A "group"', '1.5']);
+  assert.equal(parsed.rows[1][2], '');
+  assert.deepEqual(parseDelimited(serializeDelimited(parsed)).rows, parsed.rows);
+});
+
+test('detects TSV files and makes duplicate headers unambiguous', () => {
+  const parsed = parseDelimited('feature\tvalue\tvalue\nP001\t2\t3\n');
+  assert.equal(parsed.delimiter, '\t');
+  assert.deepEqual(parsed.headers, ['feature', 'value', 'value_2']);
+});
+
+test('summarizes missingness and detects mostly numeric columns', () => {
+  const parsed = parseDelimited('feature,group,value\nP001,A,1.2\nP002,A,2.4\nP003,B,missing\nP004,,4.8\n');
+  assert.deepEqual(numericColumnIndexes(parsed), [2]);
+  assert.deepEqual(summarizeDataset(parsed), { rows: 4, columns: 3, missing: 1, numericColumns: 1 });
+});
+
+test('aggregates editable values by category and builds histogram bins', () => {
+  const parsed = parseDelimited('group,value\nA,1\nA,3\nB,-2\nB,\n');
+  assert.deepEqual(aggregateMeanByCategory(parsed, 0, 1), [
+    { category: 'A', count: 2, mean: 2 },
+    { category: 'B', count: 1, mean: -2 },
+  ]);
+  const bins = histogram(parsed, 1, 2);
+  assert.equal(bins.length, 2);
+  assert.equal(bins.reduce((total, bin) => total + bin.count, 0), 3);
+});
+
+test('rejects empty and malformed delimited files', () => {
+  assert.throws(() => parseDelimited(''), /empty/i);
+  assert.throws(() => parseDelimited('a,b\n"open,1\n'), /unclosed/i);
 });
