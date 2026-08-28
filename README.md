@@ -12,6 +12,8 @@ This repository is a portfolio demonstration by [May Myat Mon](https://github.co
 
 The app runs entirely in the browser. Values entered into the calculator are not uploaded, stored, or shared. Results are exploratory and are not clinical recommendations.
 
+Changes to the static app are automatically tested and deployed to GitHub Pages from the reviewed `docs/` directory.
+
 ![Top synthetic protein features ranked by univariate discrimination AUC](results/top_features.svg)
 
 ## What is real—and what is synthetic
