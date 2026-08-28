@@ -78,6 +78,49 @@ def auc(positive: list[float], negative: list[float]) -> float:
     return wins / (len(positive) * len(negative))
 
 
+def render_top_features_svg(ranking: list[dict], output: Path) -> None:
+    """Render a dependency-free, deterministic summary chart."""
+    top = ranking[:10]
+    width = 920
+    height = 118 + 44 * len(top)
+    left = 150
+    bar_width = 620
+    parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
+        '<title id="title">Top protein features by univariate discrimination AUC</title>',
+        '<desc id="desc">Horizontal bars for the ten highest-ranked synthetic protein features. P001 through P008 are embedded positive controls.</desc>',
+        '<rect width="100%" height="100%" rx="18" fill="#f6f8fa"/>',
+        '<text x="34" y="42" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#172321">Top synthetic change signals</text>',
+        '<text x="34" y="70" font-family="system-ui, sans-serif" font-size="14" fill="#57606a">Week 12 minus baseline · ranked by |Welch t| · bar length shows AUC above chance</text>',
+    ]
+    for index, item in enumerate(top):
+        y = 101 + index * 44
+        auc_value = item["discrimination_auc"]
+        scaled = max(0.0, min(1.0, (auc_value - 0.5) / 0.5))
+        rendered_width = scaled * bar_width
+        is_control = int(item["protein"][1:]) <= 8
+        color = "#1f6a59" if is_control else "#4e7192"
+        parts.extend(
+            [
+                f'<text x="34" y="{y + 20}" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#172321">{item["protein"]}</text>',
+                f'<rect x="{left}" y="{y}" width="{bar_width}" height="26" rx="6" fill="#d8dee4"/>',
+                f'<rect x="{left}" y="{y}" width="{rendered_width:.2f}" height="26" rx="6" fill="{color}"/>',
+                f'<text x="{left + bar_width + 18}" y="{y + 19}" font-family="system-ui, sans-serif" font-size="14" fill="#172321">{auc_value:.3f}</text>',
+            ]
+        )
+    legend_y = height - 18
+    parts.extend(
+        [
+            f'<circle cx="34" cy="{legend_y - 5}" r="6" fill="#1f6a59"/>',
+            f'<text x="48" y="{legend_y}" font-family="system-ui, sans-serif" font-size="12" fill="#57606a">embedded control</text>',
+            f'<circle cx="180" cy="{legend_y - 5}" r="6" fill="#4e7192"/>',
+            f'<text x="194" y="{legend_y}" font-family="system-ui, sans-serif" font-size="12" fill="#57606a">other feature</text>',
+            "</svg>",
+        ]
+    )
+    output.write_text("\n".join(parts) + "\n", encoding="utf-8")
+
+
 def analyse(input_path: Path, results_dir: Path) -> dict:
     rows = read_rows(input_path)
     corrected = batch_correct(rows)
@@ -146,6 +189,7 @@ def analyse(input_path: Path, results_dir: Path) -> dict:
     (results_dir / "summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
+    render_top_features_svg(ranking, results_dir / "top_features.svg")
     top_rows = "\n".join(
         f"| {index} | {item['protein']} | {item['cohen_d']:.2f} | {item['discrimination_auc']:.3f} |"
         for index, item in enumerate(ranking[:10], start=1)

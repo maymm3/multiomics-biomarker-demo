@@ -6,6 +6,8 @@ An inspectable, standard-library Python workflow for quality-checking longitudin
 
 This repository is a portfolio demonstration by [May Myat Mon](https://github.com/maymm3). It reflects the structure of real multi-omics work while protecting research participants and institutional intellectual property.
 
+![Top synthetic protein features ranked by univariate discrimination AUC](results/top_features.svg)
+
 ## What is real—and what is synthetic
 
 - The code is runnable and tested.
@@ -35,6 +37,7 @@ Expected outputs:
 - [`results/report.md`](results/report.md) — concise generated analysis report
 - [`results/feature_ranking.csv`](results/feature_ranking.csv) — complete ranked feature table
 - [`results/summary.json`](results/summary.json) — machine-readable QC and headline results
+- [`results/top_features.svg`](results/top_features.svg) — dependency-free generated result visualization
 
 ## Workflow
 

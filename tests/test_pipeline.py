@@ -39,6 +39,9 @@ class PipelineTest(unittest.TestCase):
             recovered = embedded.intersection(summary["top_features"])
             self.assertGreaterEqual(len(recovered), 6)
             self.assertTrue((results / "feature_ranking.csv").exists())
+            chart = (results / "top_features.svg").read_text(encoding="utf-8")
+            self.assertIn("Top protein features", chart)
+            self.assertIn("P003", chart)
             with (results / "feature_ranking.csv").open(newline="", encoding="utf-8") as handle:
                 self.assertEqual(len(list(csv.DictReader(handle))), N_PROTEINS)
 
