@@ -12,6 +12,10 @@ const {
   summarizeDataset,
   aggregateMeanByCategory,
   histogram,
+  pairedNumericRows,
+  boxPlotStats,
+  volcanoRows,
+  heatmapMatrix,
 } = globalThis.SignalData;
 
 test('reproduces the default synthetic example', () => {
@@ -73,4 +77,38 @@ test('aggregates editable values by category and builds histogram bins', () => {
 test('rejects empty and malformed delimited files', () => {
   assert.throws(() => parseDelimited(''), /empty/i);
   assert.throws(() => parseDelimited('a,b\n"open,1\n'), /unclosed/i);
+});
+
+test('keeps only complete numeric pairs for scatter and line plots', () => {
+  const parsed = parseDelimited('group,x,y\nA,1,2\nA,missing,3\nB,4,\nB,5,6\n');
+  assert.deepEqual(pairedNumericRows(parsed, 1, 2, 0), [
+    { x: 1, y: 2, rowIndex: 0, category: 'A' },
+    { x: 5, y: 6, rowIndex: 3, category: 'B' },
+  ]);
+});
+
+test('calculates quartiles, whiskers, and outliers for box plots', () => {
+  const parsed = parseDelimited('group,value\nA,1\nA,2\nA,3\nA,100\nB,-1\nB,1\n');
+  const groups = boxPlotStats(parsed, 0, 1);
+  assert.equal(groups[0].category, 'A');
+  assert.equal(groups[0].median, 2.5);
+  assert.equal(groups[0].upper, 3);
+  assert.deepEqual(groups[0].outliers, [100]);
+});
+
+test('transforms valid probabilities for volcano plots', () => {
+  const parsed = parseDelimited('effect,p\n2,0.01\n-1.5,1\n0,0\n1,2\n');
+  assert.deepEqual(volcanoRows(parsed, 0, 1), [
+    { effect: 2, probability: 0.01, significance: 2, rowIndex: 0 },
+    { effect: -1.5, probability: 1, significance: 0, rowIndex: 1 },
+  ]);
+});
+
+test('builds a row-scaled heatmap matrix without inventing missing values', () => {
+  const parsed = parseDelimited('feature,s1,s2,s3\nP001,1,2,3\nP002,4,,4\n');
+  const matrix = heatmapMatrix(parsed, 0);
+  assert.deepEqual(matrix.columns, ['s1', 's2', 's3']);
+  assert.ok(Math.abs(matrix.rows[0].values.reduce((total, value) => total + value, 0)) < 1e-12);
+  assert.equal(matrix.rows[1].values[1], null);
+  assert.deepEqual([matrix.rows[1].values[0], matrix.rows[1].values[2]], [0, 0]);
 });

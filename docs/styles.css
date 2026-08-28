@@ -99,6 +99,7 @@ h1 { margin-top:24px; max-width:820px; font-size:clamp(48px,7vw,88px); line-heig
 .data-metrics strong { font:650 28px 'Manrope',sans-serif; letter-spacing:-.04em; }
 .dashboard-controls { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
 .dashboard-controls label { display:grid; gap:7px; color:var(--muted); font-size:11px; font-weight:750; text-transform:uppercase; letter-spacing:.06em; }
+.dashboard-controls [hidden] { display:none; }
 .dashboard-controls select,.dashboard-controls input { width:100%; min-height:44px; padding:0 12px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink); text-transform:none; letter-spacing:0; }
 .dashboard-controls select:disabled { color:#969d99; background:#e8e7e0; }
 .dashboard-grid { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:18px; }
@@ -107,6 +108,9 @@ h1 { margin-top:24px; max-width:820px; font-size:clamp(48px,7vw,88px); line-heig
 .card-heading .detail-label { margin:0 0 8px; color:var(--muted); }
 .card-heading h3 { font-size:22px; letter-spacing:-.025em; }
 .card-heading>span { color:var(--muted); font-size:11px; text-align:right; }
+.chart-meta { display:grid; justify-items:end; gap:8px; color:var(--muted); font-size:11px; text-align:right; }
+.chart-meta button { min-height:32px; padding:0 11px; border:1px solid var(--line); border-radius:8px; background:white; color:var(--ink); cursor:pointer; font-size:10px; font-weight:750; }
+.chart-meta button:hover { border-color:var(--ink); }
 #data-chart { display:block; width:100%; height:auto; min-height:260px; margin-top:12px; overflow:visible; }
 .chart-gridline { stroke:#deded5; stroke-width:1; }
 .chart-baseline { stroke:#737b77; stroke-width:1.5; }

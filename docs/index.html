@@ -76,17 +76,43 @@
         </div>
 
         <div class="dashboard-controls" aria-label="Visualization controls">
+          <label>Visualization
+            <select id="chart-mode">
+              <option value="mean">Mean bar chart</option>
+              <option value="histogram">Histogram</option>
+              <option value="box">Box plot</option>
+              <option value="scatter">Scatter plot</option>
+              <option value="line">Line plot</option>
+              <option value="volcano">Volcano plot</option>
+              <option value="heatmap">Heatmap</option>
+            </select>
+          </label>
           <label>Category
             <select id="category-column"></select>
           </label>
-          <label>Numeric value
+          <label>X / effect column
+            <select id="x-column"></select>
+          </label>
+          <label>Y / value column
             <select id="value-column"></select>
           </label>
-          <label>Visualization
-            <select id="chart-mode">
-              <option value="mean">Mean by category</option>
-              <option value="histogram">Distribution</option>
+          <label>Color palette
+            <select id="chart-palette">
+              <option value="forest">Forest</option>
+              <option value="ocean">Ocean</option>
+              <option value="sunset">Sunset</option>
+              <option value="colorblind">Colorblind safe</option>
+              <option value="mono">Monochrome</option>
             </select>
+          </label>
+          <label>Chart title
+            <input id="chart-title-input" type="text" placeholder="Automatic title" maxlength="100">
+          </label>
+          <label class="volcano-only" hidden>Effect cutoff
+            <input id="effect-cutoff" type="number" min="0" step="0.1" value="1">
+          </label>
+          <label class="volcano-only" hidden>P-value cutoff
+            <input id="probability-cutoff" type="number" min="0.0000001" max="1" step="0.01" value="0.05">
           </label>
           <label>Filter rows
             <input id="table-filter" type="search" placeholder="Search any value" autocomplete="off">
@@ -97,7 +123,7 @@
           <article class="chart-card">
             <div class="card-heading">
               <div><p class="detail-label">Live visualization</p><h3 id="chart-title">Mean value by group</h3></div>
-              <span id="chart-observations">0 valid values</span>
+              <div class="chart-meta"><span id="chart-observations">0 valid values</span><button id="download-chart" type="button">Download SVG</button></div>
             </div>
             <svg id="data-chart" viewBox="0 0 760 350" role="img" aria-labelledby="chart-title chart-description"></svg>
             <p class="chart-description" id="chart-description">The chart updates when you edit a value or change a control.</p>

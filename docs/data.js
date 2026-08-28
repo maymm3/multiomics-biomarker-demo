@@ -148,6 +148,111 @@
     return bins;
   }
 
+  function pairedNumericRows(dataset, xIndex, yIndex, categoryIndex = null, limit = 5000) {
+    return dataset.rows.flatMap((row, rowIndex) => {
+      const xText = String(row[xIndex] ?? '').trim();
+      const yText = String(row[yIndex] ?? '').trim();
+      const x = Number(xText);
+      const y = Number(yText);
+      if (!xText || !yText || !Number.isFinite(x) || !Number.isFinite(y)) return [];
+      return [{
+        x,
+        y,
+        rowIndex,
+        category: categoryIndex === null ? '' : String(row[categoryIndex] ?? '').trim() || 'Missing',
+      }];
+    }).slice(0, limit);
+  }
+
+  function quantileSorted(values, probability) {
+    if (values.length === 0) return null;
+    const position = (values.length - 1) * probability;
+    const lower = Math.floor(position);
+    const fraction = position - lower;
+    return values[lower + 1] === undefined
+      ? values[lower]
+      : values[lower] + fraction * (values[lower + 1] - values[lower]);
+  }
+
+  function boxPlotStats(dataset, categoryIndex, valueIndex, limit = 16) {
+    const groups = new Map();
+    dataset.rows.forEach((row) => {
+      const text = String(row[valueIndex] ?? '').trim();
+      const value = Number(text);
+      if (!text || !Number.isFinite(value)) return;
+      const category = String(row[categoryIndex] ?? '').trim() || 'Missing';
+      if (!groups.has(category)) groups.set(category, []);
+      groups.get(category).push(value);
+    });
+    return [...groups.entries()]
+      .sort((left, right) => right[1].length - left[1].length || left[0].localeCompare(right[0]))
+      .slice(0, limit)
+      .map(([category, unsorted]) => {
+        const values = [...unsorted].sort((left, right) => left - right);
+        const q1 = quantileSorted(values, 0.25);
+        const median = quantileSorted(values, 0.5);
+        const q3 = quantileSorted(values, 0.75);
+        const iqr = q3 - q1;
+        const lowerFence = q1 - 1.5 * iqr;
+        const upperFence = q3 + 1.5 * iqr;
+        const inside = values.filter((value) => value >= lowerFence && value <= upperFence);
+        return {
+          category,
+          count: values.length,
+          q1,
+          median,
+          q3,
+          lower: inside[0],
+          upper: inside.at(-1),
+          outliers: values.filter((value) => value < lowerFence || value > upperFence),
+        };
+      });
+  }
+
+  function volcanoRows(dataset, effectIndex, probabilityIndex, limit = 10000) {
+    return dataset.rows.flatMap((row, rowIndex) => {
+      const effectText = String(row[effectIndex] ?? '').trim();
+      const probabilityText = String(row[probabilityIndex] ?? '').trim();
+      const effect = Number(effectText);
+      const probability = Number(probabilityText);
+      if (!effectText || !probabilityText || !Number.isFinite(effect) || !Number.isFinite(probability) || probability <= 0 || probability > 1) return [];
+      const significance = probability === 1 ? 0 : -Math.log10(probability);
+      return [{ effect, probability, significance, rowIndex }];
+    }).slice(0, limit);
+  }
+
+  function heatmapMatrix(dataset, labelIndex, options = {}) {
+    const { scaleRows = true, rowLimit = 60, columnLimit = 40 } = options;
+    const numericIndexes = numericColumnIndexes(dataset)
+      .filter((index) => index !== labelIndex)
+      .slice(0, columnLimit);
+    const rows = dataset.rows.slice(0, rowLimit).map((row, rowIndex) => {
+      const rawValues = numericIndexes.map((index) => {
+        const text = String(row[index] ?? '').trim();
+        const value = Number(text);
+        return text && Number.isFinite(value) ? value : null;
+      });
+      const valid = rawValues.filter((value) => value !== null);
+      let values = rawValues;
+      if (scaleRows && valid.length > 1) {
+        const mean = valid.reduce((total, value) => total + value, 0) / valid.length;
+        const variance = valid.reduce((total, value) => total + (value - mean) ** 2, 0) / (valid.length - 1);
+        const deviation = Math.sqrt(variance);
+        values = rawValues.map((value) => value === null ? null : deviation > 0 ? (value - mean) / deviation : 0);
+      }
+      return {
+        label: String(row[labelIndex] ?? '').trim() || `Row ${rowIndex + 1}`,
+        values,
+      };
+    });
+    return {
+      columns: numericIndexes.map((index) => dataset.headers[index]),
+      columnIndexes: numericIndexes,
+      rows,
+      scaled: scaleRows,
+    };
+  }
+
   const api = Object.freeze({
     detectDelimiter,
     parseDelimited,
@@ -156,6 +261,10 @@
     summarizeDataset,
     aggregateMeanByCategory,
     histogram,
+    pairedNumericRows,
+    boxPlotStats,
+    volcanoRows,
+    heatmapMatrix,
   });
   root.SignalData = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

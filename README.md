@@ -10,9 +10,21 @@ This repository is a portfolio demonstration by [May Myat Mon](https://github.co
 
 [Open the free Signal Atlas web app](https://maymm3.github.io/multiomics-biomarker-demo/) to explore the recovered synthetic signals or calculate Cohen's *d* from two groups of summary values.
 
-The interactive data workspace accepts CSV and TSV files, reports basic table quality metrics, lets users adjust cells, and redraws grouped means or numeric distributions immediately. Adjusted data can be downloaded as a cleaned CSV. For responsive use, files are limited to 8 MB, 25,000 rows, and 200 columns.
+The interactive data workspace accepts CSV and TSV files, reports basic table quality metrics, and lets users adjust cells with immediate visual updates. It currently supports seven scientific views:
+
+- Mean bar chart
+- Histogram
+- Box plot with 1.5×IQR whiskers and outliers
+- Scatter plot
+- Grouped line plot
+- Volcano plot with adjustable effect and p-value cutoffs
+- Row-scaled heatmap
+
+Users can choose columns, change color palettes, set a custom title, export a self-contained SVG, and download the adjusted table as cleaned CSV. For responsive use, files are limited to 8 MB, 25,000 rows, and 200 columns.
 
 The app runs entirely in the browser. Uploaded files and calculator values are not sent to a server, stored, or shared. Results are exploratory and are not clinical recommendations.
+
+Signal Atlas is intentionally independent and dependency-free. It does not currently perform PCA, hierarchical clustering, differential-expression modelling, enrichment analysis, or microbiome-specific workflows; those require separate validated statistical modules rather than cosmetic plotting code.
 
 Changes to the static app are automatically tested and deployed to GitHub Pages from the reviewed `docs/` directory.
 
