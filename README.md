@@ -6,6 +6,12 @@ An inspectable, standard-library Python workflow for quality-checking longitudin
 
 This repository is a portfolio demonstration by [May Myat Mon](https://github.com/maymm3). It reflects the structure of real multi-omics work while protecting research participants and institutional intellectual property.
 
+## Try Signal Atlas
+
+[Open the free Signal Atlas web app](https://maymm3.github.io/multiomics-biomarker-demo/) to explore the recovered synthetic signals or calculate Cohen's *d* from two groups of summary values.
+
+The app runs entirely in the browser. Values entered into the calculator are not uploaded, stored, or shared. Results are exploratory and are not clinical recommendations.
+
 ![Top synthetic protein features ranked by univariate discrimination AUC](results/top_features.svg)
 
 ## What is real—and what is synthetic
@@ -18,7 +24,7 @@ This repository is a portfolio demonstration by [May Myat Mon](https://github.co
 
 ## Reproduce the result
 
-Only Python 3.10+ is required; there are no third-party packages.
+Only Python 3.10+ is required to reproduce the scientific pipeline; there are no third-party Python packages. The separate browser-tool tests require Node.js 20+.
 
 ```bash
 python src/generate_data.py

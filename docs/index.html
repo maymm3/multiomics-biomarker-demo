@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#214d3b">
+    <title>Signal Atlas | Free bioinformatics effect explorer</title>
+    <meta name="description" content="A free browser-based bioinformatics tool for exploring synthetic biomarker signals and estimating standardized group differences. Built by May Myat Mon.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Signal Atlas">
+    <meta property="og:description" content="A free, reproducible bioinformatics tool built by May Myat Mon.">
+    <meta property="og:url" content="https://maymm3.github.io/multiomics-biomarker-demo/">
+    <meta property="og:image" content="https://maymm3.github.io/multiomics-biomarker-demo/og.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./stats.js" defer></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to the tool</a>
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Signal Atlas home"><span class="brand-mark" aria-hidden="true">S</span>Signal Atlas</a>
+      <div class="nav-links">
+        <a href="#explore">Explore</a>
+        <a href="#calculate">Try the tool</a>
+        <a class="nav-cta" href="https://github.com/maymm3/multiomics-biomarker-demo">View the code</a>
+      </div>
+    </nav>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div>
+          <p class="eyebrow"><span aria-hidden="true"></span> Free · open · reproducible</p>
+          <h1>Explore a biomarker workflow without the black box.</h1>
+          <p class="lede">A free bioinformatics tool built by May Myat Mon. Explore a tested longitudinal proteomics analysis, then compare two groups using your own summary values.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#explore">Explore the signals <span aria-hidden="true">↓</span></a>
+            <a class="button secondary" href="https://github.com/maymm3/multiomics-biomarker-demo/actions"><span class="status-dot" aria-hidden="true"></span> Reproducibility checks</a>
+          </div>
+        </div>
+        <aside class="hero-note">
+          <p class="note-label">What you are viewing</p>
+          <p>Real, runnable analysis code applied to a deterministic synthetic cohort.</p>
+          <p class="note-foot">No patient records. No employer files. No clinical recommendation.</p>
+        </aside>
+      </section>
+
+      <section class="metrics" aria-label="Dataset summary">
+        <article><strong>72</strong><span>Synthetic participants</span></article>
+        <article><strong>40</strong><span>Protein features</span></article>
+        <article><strong>3</strong><span>Study timepoints</span></article>
+        <article><strong>8/8</strong><span>Planted signals recovered</span></article>
+      </section>
+
+      <section class="section" id="explore">
+        <div class="section-heading">
+          <div><p class="kicker">Interactive result explorer</p><h2>See which signals rose to the top.</h2></div>
+          <label class="search"><span aria-hidden="true">⌕</span><span class="sr-only">Search protein ID</span><input id="protein-search" type="search" placeholder="Search protein ID" autocomplete="off"></label>
+        </div>
+        <div class="explorer-grid">
+          <div class="ranking" aria-label="Ranked protein features">
+            <div class="ranking-head"><span>Feature</span><span>Discrimination AUC</span><span>Effect</span></div>
+            <div id="feature-list" role="list"></div>
+            <p class="empty" id="empty-state" hidden>No matching feature. Try P001–P008.</p>
+          </div>
+          <aside class="detail" aria-live="polite">
+            <p class="detail-label">Selected feature</p>
+            <div class="detail-title"><h3 id="selected-id">P001</h3><span id="selected-direction">higher in persistent group</span></div>
+            <dl>
+              <div><dt>Discrimination AUC</dt><dd id="selected-auc">0.974</dd></div>
+              <div><dt>Standardized effect</dt><dd id="selected-effect">+2.66</dd></div>
+              <div><dt>Signal role</dt><dd>Positive control</dd></div>
+            </dl>
+            <p class="explain" id="selected-explanation">P001 shows a higher week-12 change in the synthetic persistent-response group. It was deliberately embedded so the workflow could prove that it recovers known signals.</p>
+            <a href="https://github.com/maymm3/multiomics-biomarker-demo/blob/main/results/feature_ranking.csv">Inspect the full result table <span aria-hidden="true">↗</span></a>
+          </aside>
+        </div>
+      </section>
+
+      <section class="calculator section" id="calculate">
+        <div class="section-heading compact">
+          <div><p class="kicker">Free browser-based tool</p><h2>Compare two groups with your own summary values.</h2></div>
+          <p>Estimate standardized mean difference from group size, mean change, and standard deviation. Your values stay on your device—nothing is uploaded or stored.</p>
+        </div>
+        <div class="calculator-grid">
+          <form class="input-panel" id="effect-form">
+            <fieldset>
+              <legend>Group A</legend>
+              <label>Sample size<input id="n1" type="number" min="2" step="1" value="34"></label>
+              <label>Mean change<input id="mean1" type="number" step="0.01" value="1.61"></label>
+              <label>Standard deviation<input id="sd1" type="number" min="0.0001" step="0.01" value="0.55"></label>
+            </fieldset>
+            <fieldset>
+              <legend>Group B</legend>
+              <label>Sample size<input id="n2" type="number" min="2" step="1" value="33"></label>
+              <label>Mean change<input id="mean2" type="number" step="0.01" value="0.14"></label>
+              <label>Standard deviation<input id="sd2" type="number" min="0.0001" step="0.01" value="0.49"></label>
+            </fieldset>
+          </form>
+          <aside class="result-panel" aria-live="polite">
+            <p class="detail-label">Cohen's d estimate</p>
+            <div class="result-number" id="result-number">2.82</div>
+            <p class="result-label" id="result-label">Large standardized difference</p>
+            <div class="result-scale" aria-hidden="true"><span id="result-bar"></span></div>
+            <p class="result-explain" id="result-explanation">Group A's mean change is higher than Group B's by 2.82 pooled standard deviations.</p>
+            <button class="download" id="download-result" type="button">Download result as JSON <span aria-hidden="true">↓</span></button>
+            <p class="clinical-note">For exploration and education. Always review assumptions and study design; this is not a clinical conclusion.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="method section">
+        <div class="section-heading compact">
+          <div><p class="kicker">From data to evidence</p><h2>A workflow designed to be questioned.</h2></div>
+          <p>Each step is readable, rerunnable, and checked automatically whenever the project changes.</p>
+        </div>
+        <ol class="steps">
+          <li><span>01</span><strong>Generate</strong><p>Create the same privacy-safe cohort from a fixed seed.</p></li>
+          <li><span>02</span><strong>Validate</strong><p>Check schema, repeated measures, and missingness.</p></li>
+          <li><span>03</span><strong>Compare</strong><p>Calculate paired baseline-to-week-12 changes.</p></li>
+          <li><span>04</span><strong>Verify</strong><p>Test signal recovery and reproduce every output byte.</p></li>
+        </ol>
+      </section>
+
+      <section class="trust section">
+        <div><p class="kicker">Responsible by design</p><h2>Open evidence, careful boundaries.</h2></div>
+        <div class="trust-copy"><p>This platform demonstrates analytical thinking and engineering quality. It does not expose participant data, recreate a previous employer's work, or claim clinical validity.</p><a href="https://github.com/maymm3/maymm3/issues/new?template=opportunity.yml">Discuss a role or collaboration <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </main>
+
+    <footer>
+      <div><span class="brand-mark" aria-hidden="true">S</span><p><strong>Signal Atlas</strong><br>A free tool by May Myat Mon.</p></div>
+      <div class="footer-links"><a href="mailto:May.Myat@autonoma.cat">Email</a><a href="https://www.linkedin.com/in/maymm3">LinkedIn</a><a href="https://github.com/maymm3">GitHub</a></div>
+    </footer>
+  </body>
+</html>
