@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this educational demonstration, please cite the repository."
+title: "Reproducible longitudinal proteomics demo"
+type: software
+authors:
+  - family-names: Mon
+    given-names: May Myat
+    orcid: "https://orcid.org/0000-0002-5191-9127"
+repository-code: "https://github.com/maymm3/multiomics-biomarker-demo"
+license: MIT
+version: 1.0.0
+date-released: 2026-08-28
