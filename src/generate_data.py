@@ -24,6 +24,7 @@ def generate(output: Path, seed: int = SEED) -> dict[str, int]:
         writer = csv.DictWriter(
             handle,
             fieldnames=("patient_id", "group", "batch", "timepoint", "protein", "npx"),
+            lineterminator="\n",
         )
         writer.writeheader()
         for patient_index in range(N_PATIENTS):
