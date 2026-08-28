@@ -1,0 +1,25 @@
+{
+  "synthetic_data": true,
+  "input_rows": 8640,
+  "patients": 72,
+  "proteins": 40,
+  "timepoints": [
+    "baseline",
+    "week4",
+    "week12"
+  ],
+  "missing_measurements": 128,
+  "complete_delta_features": 40,
+  "top_features": [
+    "P003",
+    "P001",
+    "P004",
+    "P002",
+    "P005",
+    "P007",
+    "P006",
+    "P008",
+    "P031",
+    "P027"
+  ]
+}
