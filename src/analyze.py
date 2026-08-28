@@ -162,7 +162,7 @@ def analyse(input_path: Path, results_dir: Path) -> dict:
     results_dir.mkdir(parents=True, exist_ok=True)
     fieldnames = list(ranking[0])
     with (results_dir / "feature_ranking.csv").open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for item in ranking:
             writer.writerow(
