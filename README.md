@@ -90,7 +90,7 @@ CI regenerates the data and results, runs unit tests, and fails if committed out
 
 ## Contact
 
-I’m open to bioinformatics, computational biology, research-data, and PhD opportunities. For a professional inquiry, contact [May.Myat@autonoma.cat](mailto:May.Myat@autonoma.cat) or use the structured form on my [GitHub profile](https://github.com/maymm3).
+I’m open to bioinformatics, computational biology, research-data, and PhD opportunities. For a professional inquiry, use the structured form on my [GitHub profile](https://github.com/maymm3).
 
 ## License
 
